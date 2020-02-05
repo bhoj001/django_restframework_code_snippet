@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Login Page</title>
+</head>
+<body>
+    Login page!
+
+    {% if form.errors %}
+    <p>There is something wrong with what you entered!</p>
+    {% endif %}
+
+    {% if next %}
+    Hey you can't access that urls
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        {{form.as_p}}
+
+        <input type = "submit" name="login" value="login">
+        <input type = "hidden" name="next" value="{{ next }}">
+
+    </form>
+
+</body>
+</html>
