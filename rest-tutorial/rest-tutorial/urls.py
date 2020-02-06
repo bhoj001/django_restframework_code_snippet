@@ -15,6 +15,7 @@ urlpatterns = [
     path('api-auth-token/',views.obtain_auth_token, name='api-auth-token'),
     # below is new syntax for login views
     # path('login', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('registration/',include('registration_form.urls'), name='user-registration')
 ]
 
 

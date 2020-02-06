@@ -9,8 +9,20 @@ https://docs.djangoproject.com/en/2.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
-
+import json
 import os
+import sys
+
+from django.core.exceptions import ImproperlyConfigured
+from django.utils.translation import ugettext_lazy as _
+from pkg_resources import resource_filename
+
+# config.json contains the keys that need to overwrite in base.py
+config_file = resource_filename("config", "config.json")
+
+# Pull configuration detail from config/config.json file
+with open(config_file) as configuration:
+    config = json.load(configuration)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -41,6 +53,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
+    'registration_form',
 ]
 
 MIDDLEWARE = [
@@ -137,3 +150,21 @@ REST_FRAMEWORK={
         'django_filters.rest_framework.DjangoFilterBackend',
         ),
 }   
+
+
+# Email settings
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# smtp settings
+try:
+    EMAIL_HOST = config["EMAIL"]["EMAIL_HOST"]
+    EMAIL_PORT = config["EMAIL"]["EMAIL_PORT"]
+    EMAIL_HOST_USER = config["EMAIL"]["EMAIL_HOST_USER"]
+    EMAIL_HOST_PASSWORD = config["EMAIL"]["EMAIL_HOST_PASSWORD"]
+    EMAIL_USE_TLS = bool(config["EMAIL"]["EMAIL_USE_TLS"])
+    FEEDBACK_MESSAGE_TO = config["EMAIL"]["FEEDBACK_MESSAGE_TO"]
+    ADMINS = config["EMAIL"]["ADMIN_EMAILS"]
+except KeyError:
+    raise ImproperlyConfigured("{}".format("Email settings"))
+
